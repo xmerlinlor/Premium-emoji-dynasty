@@ -2,6 +2,12 @@ const { Telegraf } = require("telegraf");
 const express = require("express");
 const config = require("./config");
 
+const {
+  getStartMenu,
+  startKeyboard,
+  customEmoji
+} = require("./telegram/menu");
+
 if (!config.BOT_TOKEN) {
   console.error("❌ BOT_TOKEN is missing.");
   process.exit(1);
@@ -25,72 +31,53 @@ app.listen(PORT, () => {
 });
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   👑 START
+   👑 START MENU
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 bot.start(async (ctx) => {
   const name = ctx.from.first_name || "User";
 
   await ctx.reply(
-    `╭━━━〔 👑 ᴇᴍᴏᴊɪ ᴅʏɴᴀsᴛʏ 〕━━━╮
-┃
-┃ 👋 ʜᴇʟʟᴏ, ${name}
-┃
-┃ ✦ Telegram Premium
-┃ ✦ Custom Emoji Manager
-┃
-┃ 📚 Store your emoji IDs
-┃ 🧪 Test custom emojis
-┃ 💻 Generate bot code
-┃
-╰━━━━━━━━━━━━━━━━━━━━╯`,
+    getStartMenu(name),
     {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            { text: "📚 ᴇᴍᴏᴊɪ ʟɪʙʀᴀʀʏ", callback_data: "library" }
-          ],
-          [
-            { text: "➕ ᴀᴅᴅ ᴇᴍᴏᴊɪ", callback_data: "add_emoji" },
-            { text: "🧪 ᴛᴇsᴛ", callback_data: "test" }
-          ],
-          [
-            { text: "💻 ᴇxᴘᴏʀᴛ ᴄᴏᴅᴇ", callback_data: "export" }
-          ]
-        ]
-      }
+      parse_mode: "HTML",
+      reply_markup: startKeyboard
     }
   );
 });
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   🔘 BUTTONS
+   📚 LIBRARY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 bot.action("library", async (ctx) => {
   await ctx.answerCbQuery();
 
   await ctx.reply(
-    `╭━━━〔 📚 ᴇᴍᴏᴊɪ ʟɪʙʀᴀʀʏ 〕━━━╮
+    `╭━━━〔 ${customEmoji("emoji01", "📚")} ᴇᴍᴏᴊɪ ʟɪʙʀᴀʀʏ 〕━━━╮
 ┃
-┃ 👑 ʀᴏʏᴀʟ
-┃ 🛡️ sᴇᴄᴜʀɪᴛʏ
-┃ ⚡ ᴇɴᴇʀɢʏ
-┃ 🔥 ғɪʀᴇ
-┃ 💎 ʟᴜxᴜʀʏ
-┃ 🤖 ᴀɪ
-┃ 💻 ᴅᴇᴠᴇʟᴏᴘᴇʀ
-┃ 🎮 ɢᴀᴍɪɴɢ
+┃ ${customEmoji("emoji02", "👑")} ᴇᴍᴏᴊɪ 𝟶𝟷
+┃ ${customEmoji("emoji03", "⭐")} ᴇᴍᴏᴊɪ 𝟶𝟸
+┃ ${customEmoji("emoji04", "⚡")} ᴇᴍᴏᴊɪ 𝟶𝟹
+┃ ${customEmoji("emoji05", "🔥")} ᴇᴍᴏᴊɪ 𝟶𝟺
+┃ ${customEmoji("emoji06", "💎")} ᴇᴍᴏᴊɪ 𝟶𝟻
 ┃
-╰━━━━━━━━━━━━━━━━━━━━╯`
+┃ ✦ ᴍᴏʀᴇ ᴇᴍᴏᴊɪs ᴄᴏᴍɪɴɢ
+┃
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    { parse_mode: "HTML" }
   );
 });
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ➕ ADD EMOJI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 bot.action("add_emoji", async (ctx) => {
   await ctx.answerCbQuery();
 
   await ctx.reply(
-    `➕ <b>ᴀᴅᴅ ᴄᴜsᴛᴏᴍ ᴇᴍᴏᴊɪ</b>
+    `${customEmoji("emoji03", "🎨")} <b>ᴀᴅᴅ ᴄᴜsᴛᴏᴍ ᴇᴍᴏᴊɪ</b>
 
 Send me a Telegram Premium custom emoji.
 
@@ -99,18 +86,32 @@ I will detect its <code>custom_emoji_id</code> automatically.`,
   );
 });
 
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   🧪 TEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
 bot.action("test", async (ctx) => {
   await ctx.answerCbQuery();
-  await ctx.reply("🧪 Send a custom emoji to test it.");
+
+  await ctx.reply(
+    `${customEmoji("emoji02", "🧪")} <b>ᴄᴜsᴛᴏᴍ ᴇᴍᴏᴊɪ ᴛᴇsᴛᴇʀ</b>
+
+Send a Premium custom emoji and I will detect its ID.`,
+    { parse_mode: "HTML" }
+  );
 });
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   💻 EXPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 bot.action("export", async (ctx) => {
   await ctx.answerCbQuery();
 
   await ctx.reply(
-    `💻 <b>ᴇxᴘᴏʀᴛ ᴄᴏᴅᴇ</b>
+    `${customEmoji("emoji01", "💻")} <b>ᴇxᴘᴏʀᴛ ᴄᴏᴅᴇ</b>
 
-Your saved emoji IDs will be converted into JavaScript code.`,
+Your saved Premium Custom Emoji IDs can be converted into JavaScript code.`,
     { parse_mode: "HTML" }
   );
 });
@@ -124,20 +125,21 @@ bot.on("message", async (ctx) => {
 
   if (!message.entities) return;
 
-  const customEmoji = message.entities.find(
+  const customEmojiEntity = message.entities.find(
     (entity) => entity.type === "custom_emoji"
   );
 
-  if (!customEmoji) return;
+  if (!customEmojiEntity) return;
 
-  const emojiId = customEmoji.custom_emoji_id;
+  const emojiId = customEmojiEntity.custom_emoji_id;
 
   await ctx.reply(
-    `╭━━━〔 🎨 ᴄᴜsᴛᴏᴍ ᴇᴍᴏᴊɪ 〕━━━╮
+    `╭━━━〔 ${customEmoji("emoji01", "🎨")} ᴄᴜsᴛᴏᴍ ᴇᴍᴏᴊɪ 〕━━━╮
 ┃
-┃ ✅ ᴅᴇᴛᴇᴄᴛᴇᴅ
+┃ ${customEmoji("emoji02", "✅")} ᴅᴇᴛᴇᴄᴛᴇᴅ
 ┃
-┃ 🆔 ᴇᴍᴏᴊɪ ɪᴅ:
+┃ 🆔 <b>ᴄᴜsᴛᴏᴍ ᴇᴍᴏᴊɪ ɪᴅ</b>
+┃
 ┃ <code>${emojiId}</code>
 ┃
 ╰━━━━━━━━━━━━━━━━━━━━╯`,
